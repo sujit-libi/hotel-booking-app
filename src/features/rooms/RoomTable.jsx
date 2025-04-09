@@ -1,4 +1,8 @@
-import styled from "styled-components";
+import { useQuery } from '@tanstack/react-query';
+import styled from 'styled-components';
+import { getRooms } from '../../services/apiRooms';
+import Spinner from '../../components/Spinner';
+import RoomRow from './RoomRow';
 
 const Table = styled.div`
   border: 1px solid var(--color-grey-200);
@@ -23,3 +27,34 @@ const TableHeader = styled.header`
   color: var(--color-grey-600);
   padding: 1.6rem 2.4rem;
 `;
+
+function RoomTable() {
+  const {
+    isLoading,
+    data: rooms,
+    error,
+  } = useQuery({
+    queryKey: ['rooms'],
+    queryFn: getRooms,
+  });
+
+  if (isLoading) return <Spinner />;
+
+  return (
+    <Table role="table">
+      <TableHeader role="row">
+        <div></div>
+        <div>Room</div>
+        <div>Capacity</div>
+        <div>Price</div>
+        <div>Discount</div>
+        <div>Action</div>
+      </TableHeader>
+      {rooms.map((room) => (
+        <RoomRow room={room} key={room.id} />
+      ))}
+    </Table>
+  );
+}
+
+export default RoomTable;
