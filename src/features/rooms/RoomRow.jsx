@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { formatCurrency } from '../../utils/helpers';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteRoom } from '../../services/apiRooms';
+import { toast } from 'react-hot-toast';
 
 const TableRow = styled.div`
   display: grid;
@@ -49,13 +50,15 @@ function RoomRow({ room }) {
   const { isLoading: isDeleting, mutate } = useMutation({
     mutationFn: (id) => deleteRoom(id),
     onSuccess: () => {
-      alert('Room successfully deleted!!!');
+      // alert('Room successfully deleted!!!');
+      toast.success('Room successfully deleted');
       queryClient.invalidateQueries({
         queryKey: ['rooms'],
       });
     },
     onError: (err) => {
-      alert(err.message);
+      // alert(err.message);
+      toast.error(err.message);
     },
   });
   return (

@@ -5,11 +5,15 @@ import RoomTable from '../features/rooms/RoomTable';
 
 function Rooms() {
   return (
-    <Row type="horizontal">
-      <Heading as="h1">All rooms</Heading>
-      <p>Filter/Sorts</p>
-      <RoomTable />
-    </Row>
+    <>
+      <Row type="horizontal">
+        <Heading as="h1">All rooms</Heading>
+        <p>Filter / Sorts</p>
+      </Row>
+      <Row>
+        <RoomTable />
+      </Row>
+    </>
   );
 }
 
