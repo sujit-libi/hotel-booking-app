@@ -44,31 +44,50 @@ const Error = styled.span`
 `;
 
 function CreateRoomForm() {
+  const { register, handleSubmit, reset } = useForm();
+
+  function handleOnSubmit(data) {
+    console.log(data, 'Form bata aako data');
+  }
   return (
-    <Form>
+    <Form onSubmit={handleSubmit(handleOnSubmit)}>
       <FormRow>
         <Label htmlFor="name">Room name</Label>
-        <Input type="text" id="name" />
+        <Input type="text" id="name" {...register('name')} />
       </FormRow>
 
       <FormRow>
-        <Label htmlFor="maxCapacity">Maximum capacity</Label>
-        <Input type="number" id="maxCapacity" />
+        <Label htmlFor="max_capacity">Maximum capacity</Label>
+        <Input type="number" id="max_capacity" {...register('max_capacity')} />
       </FormRow>
 
       <FormRow>
-        <Label htmlFor="regularPrice">Regular price</Label>
-        <Input type="number" id="regularPrice" />
+        <Label htmlFor="regular_price">Regular price</Label>
+        <Input
+          type="number"
+          id="regular_price"
+          {...register('regular_price')}
+        />
       </FormRow>
 
       <FormRow>
         <Label htmlFor="discount">Discount</Label>
-        <Input type="number" id="discount" defaultValue={0} />
+        <Input
+          type="number"
+          id="discount"
+          defaultValue={0}
+          {...register('discount')}
+        />
       </FormRow>
 
       <FormRow>
         <Label htmlFor="description">Description for website</Label>
-        <Textarea type="number" id="description" defaultValue="" />
+        <Textarea
+          type="number"
+          id="description"
+          defaultValue=""
+          {...register('description')}
+        />
       </FormRow>
 
       <FormRow>
