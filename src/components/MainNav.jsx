@@ -1,6 +1,12 @@
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { HiOutlineHome } from 'react-icons/hi2';
+import {
+  HiOutlineCalendarDays,
+  HiOutlineCog6Tooth,
+  HiOutlineHome,
+  HiOutlineHomeModern,
+  HiOutlineUsers,
+} from 'react-icons/hi2';
 
 const NavList = styled.ul`
   display: flex;
@@ -60,35 +66,35 @@ function MainNav() {
         <li>
           <StyledNavlink to="/bookings">
             {' '}
-            <HiOutlineHome />
+            <HiOutlineCalendarDays />
             <span>Bookings</span>
           </StyledNavlink>
         </li>
         <li>
           <StyledNavlink to="/rooms">
             {' '}
-            <HiOutlineHome />
+            <HiOutlineHomeModern />
             <span>Rooms</span>
           </StyledNavlink>
         </li>
         <li>
           <StyledNavlink to="/users">
             {' '}
-            <HiOutlineHome />
+            <HiOutlineUsers />
             <span>Users</span>
           </StyledNavlink>
         </li>
-        <li>
+        {/* <li>
           <StyledNavlink to="/account">
             {' '}
             <HiOutlineHome />
             <span>Account</span>
           </StyledNavlink>
-        </li>
+        </li> */}
         <li>
           <StyledNavlink to="/settings">
             {' '}
-            <HiOutlineHome />
+            <HiOutlineCog6Tooth />
             <span>Settings</span>
           </StyledNavlink>
         </li>
