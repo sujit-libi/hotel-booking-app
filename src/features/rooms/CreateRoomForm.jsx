@@ -28,7 +28,7 @@ function CreateRoomForm() {
   function handleOnSubmit(data) {
     // console.log(data, 'Form bata aako data');
     // Later rename mutate this method to createRoom or something meaningfull.
-    mutate(data);
+    mutate({ ...data, image: data.image[0] });
   }
 
   function handleOnError(error) {
@@ -111,10 +111,10 @@ function CreateRoomForm() {
         <FileInput
           id="image"
           accept="image/*"
-          // {...register('image', {
-          //   // required: isEditSession ? false : 'This field is required',
-          //   required: 'This field is required',
-          // })}
+          {...register('image', {
+            // required: isEditSession ? false : 'This field is required',
+            required: 'This field is required',
+          })}
         />
       </FormRow>
 
