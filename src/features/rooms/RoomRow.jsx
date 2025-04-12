@@ -1,24 +1,28 @@
 import styled from 'styled-components';
 import { formatCurrency } from '../../utils/helpers';
 
-import { useState } from 'react';
 import { HiPencil, HiSquare2Stack, HiTrash } from 'react-icons/hi2';
 import CreateRoomForm from './CreateRoomForm';
 
 import { useDeleteRoom } from './hooks/useDeleteRoom';
 import { useCreateRoom } from './hooks/useCreateRoom';
 
-const TableRow = styled.div`
-  display: grid;
-  grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
-  column-gap: 2.4rem;
-  align-items: center;
-  padding: 1.4rem 2.4rem;
+import Modal from '../../components/Modal';
+import ConfirmDelete from '../../components/ConfirmDelete';
+import Table from '../../components/Table';
+import Menus from '../../components/Menus';
 
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--color-grey-100);
-  }
-`;
+// const TableRow = styled.div`
+//   display: grid;
+//   grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
+//   column-gap: 2.4rem;
+//   align-items: center;
+//   padding: 1.4rem 2.4rem;
+
+//   &:not(:last-child) {
+//     border-bottom: 1px solid var(--color-grey-100);
+//   }
+// `;
 
 const Img = styled.img`
   display: block;
@@ -48,7 +52,6 @@ const Discount = styled.div`
 `;
 
 function RoomRow({ room }) {
-  const [showForm, setShowForm] = useState(false);
   const { isDeleting, deleteRoom } = useDeleteRoom();
   const { isCreating, createRoom } = useCreateRoom();
 
@@ -74,27 +77,53 @@ function RoomRow({ room }) {
   }
 
   return (
-    <>
-      <TableRow role="row">
-        <Img src={image} />
-        <Room>{name}</Room>
-        <div>{`Fits up to ${max_capacity} guest`}</div>
-        <Price>{`${formatCurrency(regular_price)}`}</Price>
-        {discount ? <Discount>{formatCurrency(discount)}</Discount> : 'N/A'}
-        <div>
-          <button disabled={isCreating} onClick={handleOnDuplicate}>
-            <HiSquare2Stack />
-          </button>
-          <button onClick={() => setShowForm((show) => !show)}>
-            <HiPencil />
-          </button>
-          <button onClick={() => deleteRoom(roomId)} disabled={isDeleting}>
-            <HiTrash />
-          </button>
-        </div>
-      </TableRow>
-      {showForm && <CreateRoomForm roomToEdit={room} />}
-    </>
+    <Table.Row>
+      <Img src={image} />
+      <Room>{name}</Room>
+      <div>Fits up to {max_capacity} guests</div>
+      <Price>{formatCurrency(regular_price)}</Price>
+      {discount ? (
+        <Discount>{formatCurrency(discount)}</Discount>
+      ) : (
+        <span>&mdash;</span>
+      )}
+      <div>
+        <Modal>
+          <Menus.Menu>
+            <Menus.Toggle id={roomId} />
+
+            <Menus.List id={roomId}>
+              <Menus.Button
+                icon={<HiSquare2Stack />}
+                onClick={handleOnDuplicate}
+              >
+                Duplicate
+              </Menus.Button>
+
+              <Modal.Open opens="edit">
+                <Menus.Button icon={<HiPencil />}>Edit</Menus.Button>
+              </Modal.Open>
+
+              <Modal.Open opens="delete">
+                <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
+              </Modal.Open>
+            </Menus.List>
+
+            <Modal.Window name="edit">
+              <CreateRoomForm roomToEdit={room} />
+            </Modal.Window>
+
+            <Modal.Window name="delete">
+              <ConfirmDelete
+                resourceName="rooms"
+                disabled={isDeleting}
+                onConfirm={() => deleteRoom(roomId)}
+              />
+            </Modal.Window>
+          </Menus.Menu>
+        </Modal>
+      </div>
+    </Table.Row>
   );
 }
 

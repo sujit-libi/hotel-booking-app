@@ -1,17 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
-import { getRooms } from '../../services/apiRooms';
 import Spinner from '../../components/Spinner';
 import RoomRow from './RoomRow';
 
-const Table = styled.div`
-  border: 1px solid var(--color-grey-200);
-
-  font-size: 1.4rem;
-  background-color: var(--color-grey-0);
-  border-radius: 7px;
-  overflow: hidden;
-`;
+import { useRooms } from './hooks/useRooms';
+import Table from '../../components/Table';
+import Menus from '../../components/Menus';
 
 const TableHeader = styled.header`
   display: grid;
@@ -29,31 +22,28 @@ const TableHeader = styled.header`
 `;
 
 function RoomTable() {
-  const {
-    isLoading,
-    data: rooms,
-    error,
-  } = useQuery({
-    queryKey: ['rooms'],
-    queryFn: getRooms,
-  });
+  const { isLoading, rooms } = useRooms();
 
   if (isLoading) return <Spinner />;
 
   return (
-    <Table role="table">
-      <TableHeader role="row">
-        <div></div>
-        <div>Room</div>
-        <div>Capacity</div>
-        <div>Price</div>
-        <div>Discount</div>
-        <div>Action</div>
-      </TableHeader>
-      {rooms.map((room) => (
-        <RoomRow room={room} key={room.id} />
-      ))}
-    </Table>
+    <Menus>
+      <Table columns="0.6fr 1.8fr 2.2fr 1fr 1fr 1fr">
+        <Table.Header role="row">
+          <div></div>
+          <div>Room</div>
+          <div>Capacity</div>
+          <div>Price</div>
+          <div>Discount</div>
+          <div>Action</div>
+        </Table.Header>
+
+        <Table.Body
+          data={rooms}
+          render={(room) => <RoomRow room={room} key={room.id} />}
+        />
+      </Table>
+    </Menus>
   );
 }
 

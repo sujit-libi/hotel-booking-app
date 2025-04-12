@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { useCreateRoom } from './hooks/useCreateRoom';
 import { useEditRoom } from './hooks/useEditRoom';
 
-function CreateRoomForm({ roomToEdit = {} }) {
+function CreateRoomForm({ roomToEdit = {}, onCloseModal }) {
   const { isCreating, createRoom } = useCreateRoom();
   const { isEditing, editRoom } = useEditRoom();
   const isWorking = isCreating || isEditing;
@@ -31,6 +31,7 @@ function CreateRoomForm({ roomToEdit = {} }) {
         {
           onSuccess: (data) => {
             reset();
+            onCloseModal?.();
           },
         }
       );
@@ -40,6 +41,7 @@ function CreateRoomForm({ roomToEdit = {} }) {
         {
           onSuccess: (data) => {
             reset();
+            onCloseModal?.();
           },
         }
       );
@@ -49,7 +51,10 @@ function CreateRoomForm({ roomToEdit = {} }) {
     console.log(error);
   }
   return (
-    <Form onSubmit={handleSubmit(handleOnSubmit, handleOnError)}>
+    <Form
+      onSubmit={handleSubmit(handleOnSubmit, handleOnError)}
+      type={onCloseModal ? 'modal' : 'regular'}
+    >
       <FormRow label="Room name" error={errors?.name?.message}>
         <Input
           type="text"
@@ -133,7 +138,11 @@ function CreateRoomForm({ roomToEdit = {} }) {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset">
+        <Button
+          variation="secondary"
+          type="reset"
+          onClick={() => onCloseModal?.()}
+        >
           Cancel
         </Button>
         <Button disabled={isWorking}>

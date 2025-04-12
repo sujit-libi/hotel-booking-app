@@ -1,13 +1,9 @@
 import Heading from '../components/Heading';
 import Row from '../components/Row';
-import Button from '../components/Button';
-import { getRooms } from '../services/apiRooms';
 import RoomTable from '../features/rooms/RoomTable';
-import { useState } from 'react';
-import CreateRoomForm from '../features/rooms/CreateRoomForm';
+import AddRoom from '../features/rooms/AddRoom';
 
 function Rooms() {
-  const [showForm, setShowForm] = useState(false);
   return (
     <>
       <Row type="horizontal">
@@ -16,10 +12,7 @@ function Rooms() {
       </Row>
       <Row>
         <RoomTable />
-        <Button onClick={() => setShowForm((show) => !show)}>
-          Add new room
-        </Button>
-        {showForm && <CreateRoomForm />}
+        <AddRoom />
       </Row>
     </>
   );
