@@ -1,13 +1,13 @@
 import supabase from './supabase';
 
 export async function getRooms() {
-  let { data: rooms, error } = await supabase.from('rooms').select('*');
+  let { data, error } = await supabase.from('rooms').select('*');
 
   if (error) {
     console.error(error);
     throw new Error('Room could not be loaded');
   }
-  return rooms;
+  return data;
 }
 
 export async function deleteRoom(id) {
@@ -18,5 +18,19 @@ export async function deleteRoom(id) {
     throw new Error('Room could not be deleted.');
   }
 
-  return;
+  return data;
+}
+
+export async function createRoom(newRoom) {
+  const { data, error } = await supabase
+    .from('rooms')
+    .insert([newRoom])
+    .select();
+
+  if (error) {
+    console.error(error);
+    throw new Error('Room could not be created.');
+  }
+
+  return data;
 }

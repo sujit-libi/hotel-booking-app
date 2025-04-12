@@ -6,6 +6,9 @@ import Button from '../../components/Button';
 import FileInput from '../../components/FileInput';
 import Textarea from '../../components/Textarea';
 import { useForm } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createRoom } from '../../services/apiRooms';
+import toast from 'react-hot-toast';
 
 const FormRow = styled.div`
   display: grid;
@@ -44,10 +47,22 @@ const Error = styled.span`
 `;
 
 function CreateRoomForm() {
+  const queryClient = useQueryClient();
   const { register, handleSubmit, reset } = useForm();
+  const { mutate, isLoading: isCreating } = useMutation({
+    mutationFn: (newRoom) => createRoom(newRoom),
+    onSuccess: () => {
+      toast.success('New Room Successfully Created!!!');
+      queryClient.invalidateQueries({ queryKey: ['rooms'] });
+      reset();
+    },
+    onError: (error) => toast.error(error.message),
+  });
 
   function handleOnSubmit(data) {
-    console.log(data, 'Form bata aako data');
+    // console.log(data, 'Form bata aako data');
+    // Later rename mutate this method to createRoom or something meaningfull.
+    mutate(data);
   }
   return (
     <Form onSubmit={handleSubmit(handleOnSubmit)}>
@@ -100,7 +115,7 @@ function CreateRoomForm() {
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button>Edit Room</Button>
+        <Button disabled={isCreating}>Edit Room</Button>
       </FormRow>
     </Form>
   );
