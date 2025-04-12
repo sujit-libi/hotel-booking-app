@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { isFuture, isPast, isToday } from "date-fns";
-import supabase from "../services/supabase";
-import Button from "../ui/Button";
-import { subtractDates } from "../utils/helpers";
+import { useState } from 'react';
+import { isFuture, isPast, isToday } from 'date-fns';
+import supabase from '../services/supabase';
+import Button from '../components/Button';
+import { subtractDates } from '../utils/helpers';
 
-import { bookings } from "./data-bookings";
-import { cabins } from "./data-cabins";
-import { guests } from "./data-guests";
+import { bookings } from './data-bookings';
+import { rooms } from './data-rooms';
+import { guests } from './data-guests';
 
 // const originalSettings = {
 //   minBookingLength: 3,
@@ -16,87 +16,87 @@ import { guests } from "./data-guests";
 // };
 
 async function deleteGuests() {
-  const { error } = await supabase.from("guests").delete().gt("id", 0);
+  const { error } = await supabase.from('guests').delete().gt('id', 0);
   if (error) console.log(error.message);
 }
 
-async function deleteCabins() {
-  const { error } = await supabase.from("cabins").delete().gt("id", 0);
+async function deleteRooms() {
+  const { error } = await supabase.from('rooms').delete().gt('id', 0);
   if (error) console.log(error.message);
 }
 
 async function deleteBookings() {
-  const { error } = await supabase.from("bookings").delete().gt("id", 0);
+  const { error } = await supabase.from('bookings').delete().gt('id', 0);
   if (error) console.log(error.message);
 }
 
 async function createGuests() {
-  const { error } = await supabase.from("guests").insert(guests);
+  const { error } = await supabase.from('guests').insert(guests);
   if (error) console.log(error.message);
 }
 
-async function createCabins() {
-  const { error } = await supabase.from("cabins").insert(cabins);
+async function createRooms() {
+  const { error } = await supabase.from('rooms').insert(rooms);
   if (error) console.log(error.message);
 }
 
 async function createBookings() {
-  // Bookings need a guestId and a cabinId. We can't tell Supabase IDs for each object, it will calculate them on its own. So it might be different for different people, especially after multiple uploads. Therefore, we need to first get all guestIds and cabinIds, and then replace the original IDs in the booking data with the actual ones from the DB
+  // Bookings need a guestId and a roomId. We can't tell Supabase IDs for each object, it will calculate them on its own. So it might be different for different people, especially after multiple uploads. Therefore, we need to first get all guestIds and roomIds, and then replace the original IDs in the booking data with the actual ones from the DB
   const { data: guestsIds } = await supabase
-    .from("guests")
-    .select("id")
-    .order("id");
-  const allGuestIds = guestsIds.map((cabin) => cabin.id);
-  const { data: cabinsIds } = await supabase
-    .from("cabins")
-    .select("id")
-    .order("id");
-  const allCabinIds = cabinsIds.map((cabin) => cabin.id);
+    .from('guests')
+    .select('id')
+    .order('id');
+  const allGuestIds = guestsIds.map((room) => room.id);
+  const { data: roomsIds } = await supabase
+    .from('rooms')
+    .select('id')
+    .order('id');
+  const allRoomIds = roomsIds.map((room) => room.id);
 
   const finalBookings = bookings.map((booking) => {
-    // Here relying on the order of cabins, as they don't have and ID yet
-    const cabin = cabins.at(booking.cabinId - 1);
-    const numNights = subtractDates(booking.endDate, booking.startDate);
-    const cabinPrice = numNights * (cabin.regularPrice - cabin.discount);
-    const extrasPrice = booking.hasBreakfast
-      ? numNights * 15 * booking.numGuests
+    // Here relying on the order of rooms, as they don't have and ID yet
+    const room = rooms.at(booking.room_id - 1);
+    const num_nights = subtractDates(booking.end_date, booking.start_date);
+    const room_price = num_nights * (room.regular_price - room.discount);
+    const extra_price = booking.has_breakfast
+      ? num_nights * 15 * booking.num_guests
       : 0; // hardcoded breakfast price
-    const totalPrice = cabinPrice + extrasPrice;
+    const total_price = room_price + extra_price;
 
     let status;
     if (
-      isPast(new Date(booking.endDate)) &&
-      !isToday(new Date(booking.endDate))
+      isPast(new Date(booking.end_date)) &&
+      !isToday(new Date(booking.end_date))
     )
-      status = "checked-out";
+      status = 'checked-out';
     if (
-      isFuture(new Date(booking.startDate)) ||
-      isToday(new Date(booking.startDate))
+      isFuture(new Date(booking.start_date)) ||
+      isToday(new Date(booking.start_date))
     )
-      status = "unconfirmed";
+      status = 'unconfirmed';
     if (
-      (isFuture(new Date(booking.endDate)) ||
-        isToday(new Date(booking.endDate))) &&
-      isPast(new Date(booking.startDate)) &&
-      !isToday(new Date(booking.startDate))
+      (isFuture(new Date(booking.end_date)) ||
+        isToday(new Date(booking.end_date))) &&
+      isPast(new Date(booking.start_date)) &&
+      !isToday(new Date(booking.start_date))
     )
-      status = "checked-in";
+      status = 'checked-in';
 
     return {
       ...booking,
-      numNights,
-      cabinPrice,
-      extrasPrice,
-      totalPrice,
-      guestId: allGuestIds.at(booking.guestId - 1),
-      cabinId: allCabinIds.at(booking.cabinId - 1),
+      num_nights,
+      room_price,
+      extra_price,
+      total_price,
+      guest_id: allGuestIds.at(booking.guest_id - 1),
+      room_id: allRoomIds.at(booking.room_id - 1),
       status,
     };
   });
 
   console.log(finalBookings);
 
-  const { error } = await supabase.from("bookings").insert(finalBookings);
+  const { error } = await supabase.from('bookings').insert(finalBookings);
   if (error) console.log(error.message);
 }
 
@@ -108,11 +108,11 @@ function Uploader() {
     // Bookings need to be deleted FIRST
     await deleteBookings();
     await deleteGuests();
-    await deleteCabins();
+    await deleteRooms();
 
     // Bookings need to be created LAST
     await createGuests();
-    await createCabins();
+    await createRooms();
     await createBookings();
 
     setIsLoading(false);
@@ -128,14 +128,14 @@ function Uploader() {
   return (
     <div
       style={{
-        marginTop: "auto",
-        backgroundColor: "#e0e7ff",
-        padding: "8px",
-        borderRadius: "5px",
-        textAlign: "center",
-        display: "flex",
-        flexDirection: "column",
-        gap: "8px",
+        marginTop: 'auto',
+        backgroundColor: '#e0e7ff',
+        padding: '8px',
+        borderRadius: '5px',
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
       }}
     >
       <h3>SAMPLE DATA</h3>

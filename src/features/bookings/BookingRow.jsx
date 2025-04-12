@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { format, isToday } from 'date-fns';
 
-import Tag from '../../ui/Tag';
-import Table from '../../ui/Table';
+import Tag from '../../components/Tag';
+import Table from '../../components/Table';
 
 import { formatCurrency } from '../../utils/helpers';
 import { formatDistanceFromNow } from '../../utils/helpers';
@@ -36,16 +36,16 @@ const Amount = styled.div`
 
 function BookingRow({
   booking: {
-    id: bookingId,
+    id: booking_id,
     created_at,
-    startDate,
-    endDate,
-    numNights,
-    numGuests,
-    totalPrice,
+    start_date,
+    end_date,
+    num_nights,
+    num_guests,
+    total_price,
     status,
-    guests: { fullName: guestName, email },
-    rooms: { name: roomName },
+    guests: { full_name: guest_name, email },
+    rooms: { name: room_name },
   },
 }) {
   const statusToTagName = {
@@ -56,29 +56,29 @@ function BookingRow({
 
   return (
     <Table.Row>
-      <Room>{roomName}</Room>
+      <Room>{room_name}</Room>
 
       <Stacked>
-        <span>{guestName}</span>
+        <span>{guest_name}</span>
         <span>{email}</span>
       </Stacked>
 
       <Stacked>
         <span>
-          {isToday(new Date(startDate))
+          {isToday(new Date(start_date))
             ? 'Today'
-            : formatDistanceFromNow(startDate)}{' '}
-          &rarr; {numNights} night stay
+            : formatDistanceFromNow(start_date)}{' '}
+          &rarr; {num_nights} night stay
         </span>
         <span>
-          {format(new Date(startDate), 'MMM dd yyyy')} &mdash;{' '}
-          {format(new Date(endDate), 'MMM dd yyyy')}
+          {format(new Date(start_date), 'MMM dd yyyy')} &mdash;{' '}
+          {format(new Date(end_date), 'MMM dd yyyy')}
         </span>
       </Stacked>
 
       <Tag type={statusToTagName[status]}>{status.replace('-', ' ')}</Tag>
 
-      <Amount>{formatCurrency(totalPrice)}</Amount>
+      <Amount>{formatCurrency(total_price)}</Amount>
     </Table.Row>
   );
 }

@@ -1,1 +1,1 @@
-import { PAGE_SIZE } from '../utils/constants';
+export const PAGE_SIZE = 10;
