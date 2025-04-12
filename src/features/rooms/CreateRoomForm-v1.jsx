@@ -1,3 +1,5 @@
+import styled from 'styled-components';
+
 import Input from '../../components/Input';
 import Form from '../../components/Form';
 import Button from '../../components/Button';
@@ -5,44 +7,28 @@ import FileInput from '../../components/FileInput';
 import Textarea from '../../components/Textarea';
 import FormRow from '../../components/FormRow';
 import { useForm } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createRoom } from '../../services/apiRooms';
+import toast from 'react-hot-toast';
 
-import { useCreateRoom } from './hooks/useCreateRoom';
-import { useEditRoom } from './hooks/useEditRoom';
-
-function CreateRoomForm({ roomToEdit = {} }) {
-  const { isCreating, createRoom } = useCreateRoom();
-  const { isEditing, editRoom } = useEditRoom();
-  const isWorking = isCreating || isEditing;
-
-  const { id: editId, ...editValues } = roomToEdit;
-  const isEditSession = Boolean(editId);
-
-  const { register, handleSubmit, reset, getValues, formState } = useForm({
-    defaultValues: isEditSession ? editValues : {},
-  });
+function CreateRoomForm() {
+  const queryClient = useQueryClient();
+  const { register, handleSubmit, reset, getValues, formState } = useForm();
   const { errors } = formState;
+  const { mutate, isLoading: isCreating } = useMutation({
+    mutationFn: (newRoom) => createRoom(newRoom),
+    onSuccess: () => {
+      toast.success('New Room Successfully Created!!!');
+      queryClient.invalidateQueries({ queryKey: ['rooms'] });
+      reset();
+    },
+    onError: (error) => toast.error(error.message),
+  });
 
   function handleOnSubmit(data) {
-    const image = typeof data.image === 'string' ? data.image : data.image[0];
-
-    if (isEditSession)
-      editRoom(
-        { newRoomData: { ...data, image }, id: editId },
-        {
-          onSuccess: (data) => {
-            reset();
-          },
-        }
-      );
-    else
-      createRoom(
-        { ...data, image: image },
-        {
-          onSuccess: (data) => {
-            reset();
-          },
-        }
-      );
+    // console.log(data, 'Form bata aako data');
+    // Later rename mutate this method to createRoom or something meaningfull.
+    mutate({ ...data, image: data.image[0] });
   }
 
   function handleOnError(error) {
@@ -54,7 +40,7 @@ function CreateRoomForm({ roomToEdit = {} }) {
         <Input
           type="text"
           id="name"
-          disabled={isWorking}
+          disabled={isCreating}
           {...register('name', {
             required: 'This field is required',
           })}
@@ -65,7 +51,7 @@ function CreateRoomForm({ roomToEdit = {} }) {
         <Input
           type="number"
           id="max_capacity"
-          disabled={isWorking}
+          disabled={isCreating}
           {...register('max_capacity', {
             required: 'This field is required',
             min: {
@@ -80,7 +66,7 @@ function CreateRoomForm({ roomToEdit = {} }) {
         <Input
           type="number"
           id="regular_price"
-          disabled={isWorking}
+          disabled={isCreating}
           {...register('regular_price', {
             required: 'This field is required',
             min: {
@@ -95,13 +81,13 @@ function CreateRoomForm({ roomToEdit = {} }) {
         <Input
           type="number"
           id="discount"
-          disabled={isWorking}
+          disabled={isCreating}
           defaultValue={0}
           {...register('discount', {
             required: 'This field is required',
-            // validate: (value) =>
-            //   value <= getValues().regular_price ||
-            //   'Discount should be less than regular price',
+            validate: (value) =>
+              value <= getValues().regular_price ||
+              'Discount should be less than regular price',
           })}
         />
       </FormRow>
@@ -114,7 +100,7 @@ function CreateRoomForm({ roomToEdit = {} }) {
           type="number"
           id="description"
           defaultValue=""
-          disabled={isWorking}
+          disabled={isCreating}
           {...register('description', {
             required: 'This field is required',
           })}
@@ -126,7 +112,8 @@ function CreateRoomForm({ roomToEdit = {} }) {
           id="image"
           accept="image/*"
           {...register('image', {
-            required: isEditSession ? false : 'This field is required',
+            // required: isEditSession ? false : 'This field is required',
+            required: 'This field is required',
           })}
         />
       </FormRow>
@@ -136,9 +123,7 @@ function CreateRoomForm({ roomToEdit = {} }) {
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button disabled={isWorking}>
-          {isEditSession ? 'Edit Room' : 'Create new room'}
-        </Button>
+        <Button disabled={isCreating}>Edit Room</Button>
       </FormRow>
     </Form>
   );

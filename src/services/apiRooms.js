@@ -21,15 +21,24 @@ export async function deleteRoom(id) {
   return data;
 }
 
-export async function createRoom(newRoom) {
-  const imageName = `${Math.random()}-${newRoom.image.name}`.replace('/', '');
-  const imagePath = `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`;
+export async function createEditRoom(newRoom, id) {
+  const hasImagePath = newRoom.image?.startsWith?.(supabaseUrl);
 
-  // 1. Creating new room
-  const { data, error } = await supabase
-    .from('rooms')
-    .insert([{ ...newRoom, image: imagePath }])
-    .select();
+  const imageName = `${Math.random()}-${newRoom.image.name}`.replace('/', '');
+  const imagePath = hasImagePath
+    ? newRoom.image
+    : `${supabaseUrl}/storage/v1/object/public/room-images/${imageName}`;
+
+  // 1. Creating new room or Editing room
+  let query = supabase.from('rooms');
+
+  // A) CREATE
+  if (!id) query = query.insert([{ ...newRoom, image: imagePath }]);
+
+  // B) EDIT
+  if (id) query = query.update({ ...newRoom, image: imagePath }).eq('id', id);
+
+  const { data, error } = await query.select().single();
 
   if (error) {
     console.error(error);
@@ -37,6 +46,8 @@ export async function createRoom(newRoom) {
   }
 
   // 2. Uploading Image
+  if (hasImagePath) return data;
+
   const { error: uploadingError } = await supabase.storage
     .from('room-images')
     .upload(imageName, newRoom.image);

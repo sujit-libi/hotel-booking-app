@@ -1,8 +1,12 @@
 import styled from 'styled-components';
 import { formatCurrency } from '../../utils/helpers';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteRoom } from '../../services/apiRooms';
-import { toast } from 'react-hot-toast';
+
+import { useState } from 'react';
+import { HiPencil, HiSquare2Stack, HiTrash } from 'react-icons/hi2';
+import CreateRoomForm from './CreateRoomForm';
+
+import { useDeleteRoom } from './hooks/useDeleteRoom';
+import { useCreateRoom } from './hooks/useCreateRoom';
 
 const TableRow = styled.div`
   display: grid;
@@ -44,32 +48,53 @@ const Discount = styled.div`
 `;
 
 function RoomRow({ room }) {
-  const queryClient = useQueryClient();
-  const { name, max_capacity, regular_price, discount, image } = room;
+  const [showForm, setShowForm] = useState(false);
+  const { isDeleting, deleteRoom } = useDeleteRoom();
+  const { isCreating, createRoom } = useCreateRoom();
 
-  const { isLoading: isDeleting, mutate } = useMutation({
-    mutationFn: (id) => deleteRoom(id),
-    onSuccess: () => {
-      // alert('Room successfully deleted!!!');
-      toast.success('Room successfully deleted');
-      queryClient.invalidateQueries({
-        queryKey: ['rooms'],
-      });
-    },
-    onError: (err) => {
-      // alert(err.message);
-      toast.error(err.message);
-    },
-  });
+  const {
+    id: roomId,
+    name,
+    max_capacity,
+    regular_price,
+    discount,
+    image,
+    description,
+  } = room;
+
+  function handleOnDuplicate() {
+    createRoom({
+      name: `Copy of ${name}`,
+      max_capacity,
+      regular_price,
+      discount,
+      image,
+      description,
+    });
+  }
+
   return (
-    <TableRow role="row">
-      <Img src={image} />
-      <Room>{name}</Room>
-      <div>{`Fits up to ${max_capacity} guest`}</div>
-      <Price>{`${formatCurrency(regular_price)}`}</Price>
-      <Discount>{formatCurrency(discount)}</Discount>
-      <button onClick={() => mutate(room.id)}>Delete</button>
-    </TableRow>
+    <>
+      <TableRow role="row">
+        <Img src={image} />
+        <Room>{name}</Room>
+        <div>{`Fits up to ${max_capacity} guest`}</div>
+        <Price>{`${formatCurrency(regular_price)}`}</Price>
+        {discount ? <Discount>{formatCurrency(discount)}</Discount> : 'N/A'}
+        <div>
+          <button disabled={isCreating} onClick={handleOnDuplicate}>
+            <HiSquare2Stack />
+          </button>
+          <button onClick={() => setShowForm((show) => !show)}>
+            <HiPencil />
+          </button>
+          <button onClick={() => deleteRoom(roomId)} disabled={isDeleting}>
+            <HiTrash />
+          </button>
+        </div>
+      </TableRow>
+      {showForm && <CreateRoomForm roomToEdit={room} />}
+    </>
   );
 }
 
