@@ -9,6 +9,8 @@ import Rooms from './pages/Rooms';
 import Settings from './pages/Settings';
 import Users from './pages/Users';
 import Login from './pages/Login';
+import Booking from './pages/Booking';
+import Checkin from './pages/Checkin';
 import AppLayout from './components/AppLayout';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -32,6 +34,8 @@ function App() {
           <Route element={<AppLayout />}>
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="bookings" element={<Bookings />} />
+            <Route path="bookings/:bookingId" element={<Booking />} />
+            <Route path="checkin/:bookingId" element={<Checkin />} />
             <Route path="account" element={<Account />} />
             <Route path="rooms" element={<Rooms />} />
             <Route path="settings" element={<Settings />} />
