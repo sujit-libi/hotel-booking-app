@@ -5,8 +5,9 @@ import styled from 'styled-components';
 import Heading from '../../components/Heading';
 import Row from '../../components/Row';
 import Spinner from '../../components/Spinner';
-import TodayItem from '../dashboard/TodayItem';
+import TodayItem from './TodayItem';
 // import { useActivityTodayStays } from './hooks/useActivityTodayStays';
+import { useTodayActivity } from './hooks/useTodayActivity';
 
 const StyledToday = styled.div`
   padding: 3.2rem;
@@ -37,7 +38,7 @@ const NoActivity = styled.p`
 `;
 
 function Today() {
-  // const { isLoading, stays } = useActivityTodayStays();
+  const { activities, isLoading } = useTodayActivity();
 
   return (
     <StyledToday>
@@ -46,12 +47,11 @@ function Today() {
         {/* Through the 'as' props, we make the button Polymorphic! Built-in into styled components. The polymorphic component pattern comes in handy when we need flexibility on the rendered HTML element. */}
         {/* id of -1 means there is no ID, which means a new booking will be made for a new guest */}
       </Row>
-      {/*
       {!isLoading ? (
-        stays?.length > 0 ? (
+        activities?.length > 0 ? (
           <TodayList>
-            {stays.map((stay) => (
-              <TodayItem key={stay.id} stay={stay} />
+            {activities.map((activity) => (
+              <TodayItem activity={activity} key={activity.id} />
             ))}
           </TodayList>
         ) : (
@@ -59,7 +59,7 @@ function Today() {
         )
       ) : (
         <Spinner />
-      )} */}
+      )}
     </StyledToday>
   );
 }
