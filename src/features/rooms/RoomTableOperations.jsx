@@ -16,8 +16,8 @@ function RoomTableOperations() {
 
       <SortBy
         options={[
-          // { value: 'name-asc', label: 'Sort by name (A-Z)' },
-          // { value: 'name-desc', label: 'Sort by name (Z-A)' },
+          { value: 'name-asc', label: 'Sort by name (A-Z)' },
+          { value: 'name-desc', label: 'Sort by name (Z-A)' },
           { value: 'regular_price-asc', label: 'Sort by price (low first)' },
           { value: 'regular_price-desc', label: 'Sort by price (high first)' },
           { value: 'max_capacity-asc', label: 'Sort by capacity (low first)' },

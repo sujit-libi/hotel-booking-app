@@ -43,7 +43,7 @@ function RoomTable() {
     filteredRooms = rooms.filter((room) => room.discount > 0);
 
   // 2) SORT
-  const sortBy = searchParams.get('sortBy') || 'startDate-asc';
+  const sortBy = searchParams.get('sortBy') || 'start_date-asc';
   const [field, direction] = sortBy.split('-');
   const modifier = direction === 'asc' ? 1 : -1;
   const sortedRooms = filteredRooms.sort(
