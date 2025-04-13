@@ -12,6 +12,8 @@ import Login from './pages/Login';
 import Booking from './pages/Booking';
 import Checkin from './pages/Checkin';
 import AppLayout from './components/AppLayout';
+import ProtectedRoute from './components/ProtectedRoute';
+// import { DarkModeProvider } from "./context/DarkModeContext";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from 'react-hot-toast';
@@ -31,7 +33,13 @@ function App() {
       <GlobalStyles />
       <BrowserRouter>
         <Routes>
-          <Route element={<AppLayout />}>
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="bookings" element={<Bookings />} />
             <Route path="bookings/:bookingId" element={<Booking />} />
