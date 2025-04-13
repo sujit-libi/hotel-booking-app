@@ -1,15 +1,14 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { box } from 'styles/styles';
-import Button from './components/Button';
-import Heading from './components/Heading';
-import Row from './components/Row';
-import Spinner from './components/Spinner';
+// import { box } from 'styles/styles';
+// import Button from './components/Button';
+import Heading from '../../components/Heading';
+import Row from '../../components/Row';
+import Spinner from '../../components/Spinner';
 import TodayItem from '../dashboard/TodayItem';
-import { useActivityTodayStays } from './useActivityTodayStays';
+// import { useActivityTodayStays } from './hooks/useActivityTodayStays';
 
 const StyledToday = styled.div`
-  ${box}
   padding: 3.2rem;
   display: flex;
   flex-direction: column;
@@ -38,7 +37,7 @@ const NoActivity = styled.p`
 `;
 
 function Today() {
-  const { isLoading, stays } = useActivityTodayStays();
+  // const { isLoading, stays } = useActivityTodayStays();
 
   return (
     <StyledToday>
@@ -47,7 +46,7 @@ function Today() {
         {/* Through the 'as' props, we make the button Polymorphic! Built-in into styled components. The polymorphic component pattern comes in handy when we need flexibility on the rendered HTML element. */}
         {/* id of -1 means there is no ID, which means a new booking will be made for a new guest */}
       </Row>
-
+      {/*
       {!isLoading ? (
         stays?.length > 0 ? (
           <TodayList>
@@ -60,7 +59,7 @@ function Today() {
         )
       ) : (
         <Spinner />
-      )}
+      )} */}
     </StyledToday>
   );
 }

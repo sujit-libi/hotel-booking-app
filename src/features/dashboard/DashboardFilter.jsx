@@ -1,9 +1,9 @@
-import Filter from 'ui/Filter';
+import Filter from '../../components/Filter';
 
 function DashboardFilter() {
   return (
     <Filter
-      filterField='last'
+      filterField="last"
       options={[
         { value: '7', label: 'Last 7 days' },
         { value: '30', label: 'Last 30 days' },

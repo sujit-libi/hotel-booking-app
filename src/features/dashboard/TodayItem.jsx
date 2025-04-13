@@ -1,9 +1,9 @@
-import CheckoutButton from 'features/check-in-out/CheckoutButton';
+import CheckoutButton from '../check-in-out/CheckoutButton';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import Button from 'components/Button';
-import { Flag } from 'components/Flag';
-import Tag from 'components/Tag';
+import Button from '../../components/Button';
+import { Flag } from '../../components/Flag';
+import Tag from '../../components/Tag';
 
 const StyledTodayItem = styled.li`
   display: grid;
